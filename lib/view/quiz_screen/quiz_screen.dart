@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app_july/dummy_db.dart';
 import 'package:quiz_app_july/utils/color_constants.dart';
+import 'package:quiz_app_july/view/quiz_screen/results_screen/results_screen.dart';
 
-class QuizScreen extends StatelessWidget {
+class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
 
+  @override
+  State<QuizScreen> createState() => _QuizScreenState();
+}
+
+class _QuizScreenState extends State<QuizScreen> {
+  int currentQuestionIndex = 0;
+
+  int? selectedAnsIndex;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +35,11 @@ class QuizScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15)),
                 height: 100,
                 alignment: Alignment.center,
-                child: Text(DummyDb.questions[0]["question"],
+                child: Text(DummyDb.questions[currentQuestionIndex]["question"],
+                    textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
                       color: ColorConstants.lightGreen,
                     )),
               ),
@@ -36,44 +48,75 @@ class QuizScreen extends StatelessWidget {
             Column(
               children: List.generate(
                 4,
-                (index) => Padding(
+                (optionIndex) => Padding(
                   padding: const EdgeInsets.only(bottom: 15),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: ColorConstants.darkBlue,
-                        border: Border.all(color: ColorConstants.darkBlue)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("option",
-                            style: TextStyle(
-                              color: ColorConstants.lightGreen,
-                            )),
-                        Icon(
-                          Icons.circle_outlined,
-                          color: ColorConstants.lightGreen,
-                        )
-                      ],
+                  child: InkWell(
+                    onTap: () {
+                      selectedAnsIndex = optionIndex;
+                      setState(() {});
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: selectedAnsIndex == optionIndex
+                              ? ColorConstants.red
+                              : ColorConstants.darkBlue,
+                          border: Border.all(color: ColorConstants.darkBlue)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                                DummyDb.questions[currentQuestionIndex]
+                                    ["options"][optionIndex],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: ColorConstants.lightGreen,
+                                )),
+                          ),
+                          Icon(
+                            Icons.circle_outlined,
+                            color: ColorConstants.lightGreen,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: ColorConstants.warmBrown,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "Next",
-                style: TextStyle(
-                    color: ColorConstants.darkBlue,
-                    fontWeight: FontWeight.bold),
+            InkWell(
+              onTap: () {
+                if (currentQuestionIndex < DummyDb.questions.length - 1) {
+                  currentQuestionIndex++;
+                  setState(() {});
+                } else {
+                  // navigate to results screen
+                  print("results screen");
+
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultsScreen(),
+                      ));
+                }
+              },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: ColorConstants.warmBrown,
+                ),
+                alignment: Alignment.center,
+                child: Text("Next",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: ColorConstants.darkBlue,
+                    )),
               ),
             ),
             SizedBox(height: 20)
