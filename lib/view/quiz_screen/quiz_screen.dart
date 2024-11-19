@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:quiz_app_july/dummy_db.dart';
 import 'package:quiz_app_july/utils/color_constants.dart';
 import 'package:quiz_app_july/view/results_screen/results_screen.dart';
@@ -38,13 +39,27 @@ class _QuizScreenState extends State<QuizScreen> {
                     borderRadius: BorderRadius.circular(15)),
                 height: 100,
                 alignment: Alignment.center,
-                child: Text(DummyDb.questions[currentQuestionIndex]["question"],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: ColorConstants.lightGreen,
-                    )),
+                child: Stack(
+                  children: [
+                    if (selectedAnsIndex ==
+                        DummyDb.questions[currentQuestionIndex]["answerIndex"])
+                      Align(
+                          alignment: Alignment.center,
+                          child: Lottie.asset(
+                              "assets/animations/popper_animation.json")),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                          DummyDb.questions[currentQuestionIndex]["question"],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: ColorConstants.lightGreen,
+                          )),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 20),
